@@ -18,10 +18,15 @@ tiny_container 在 Android 上通过 PRoot 运行 Debian 13 + XFCE 桌面，并�
 
 | 版本 | 说明 |
 |---|---|
-| **最终版 v6** | 当前使用版本，功能最全，键盘相关代码已全部移除 |
-| v5 及更早 | 历史版本，仅供回退 |
+| **[v6 · 最终版](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v6)** | **当前使用版本**，功能最全，键盘相关代码已全部移除 |
+| [v5](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v5) | 历史版本（含悬浮键盘 + 光标跟随），仅供回退 |
+| [v4](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v4) | 历史版本（镜像增量升级 + 指针跟随按钮） |
+| [v3](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v3) | 历史版本（悬浮键盘补设置入口） |
+| [v2](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v2) | 历史版本（指针加速 / 指针样式 / 桌面功能首批） |
+| [v1](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v1) | 最初版本（只改了缩放默认不锁定） |
 
-每个 Release 里都附带对应的 `guide-usage-zh.md`（使用说明）和 `readme-versions-zh.md`（版本历史）。
+每个 Release 都附带 `readme-versions-zh.md`（版本历史与 SHA-256）；
+v6 另外附带 `guide-usage-zh.md`（使用说明）和 `tc4-release.jks`（签名密钥副本）。
 
 **历史版本汇总表（含 SHA-256 与回退方法）→ [history-versions/](history-versions/README-历史版本说明.md)**
 
@@ -70,7 +75,7 @@ release/        使用说明与版本历史的纯净副本
 ## 签名
 
 所有版本共用一把 keystore（alias `tc4`，口令 `tc4zoom`），所以可以互相覆盖安装。
-密钥副本在 Releases 的 `_signing-keys` 资产里。
+密钥副本 `tc4-release.jks` 直接附在 [v6 Release](https://github.com/ssc8537/mobile-linux-pc/releases/tag/v6) 的资产里。
 
 ## 许可证
 
