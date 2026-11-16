@@ -1,0 +1,19 @@
+AVNC, Android için açık kaynaklı bir VNC istemcisidir. Bir VNC sunucusu çalıştıran herhangi bir aygıtı uzaktan denetlemenizi sağlar.
+
+Özellikleri:
+
+- Material tasarımı (Koyu tema ile birlikte)
+- Yapılandırılabilir hareketler
+- Sanal Tuşlar
+- VNC tekrarlayıcı desteği
+- LAN üzerinden uyandırma (Wake-on-LAN) desteği
+- Yerleşik SSH tüneli (SSH üzerinden VNC)
+- Resim içinde resim modu
+- Yalnızca görüntüleme modu
+- Videosuz mod
+- Otomatik sunucu bulma (Zeroconf)
+- Sunucuları içe/dışa aktarma
+- Sunucu ile pano eşzamanlaması
+- `vnc://` URI desteği
+- TLS desteği (AnonTLS, VeNCrypt)
+- Sıkı kodlama desteği

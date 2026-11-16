@@ -1,0 +1,145 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'com.android.library' version '8.10.1'
+    id 'org.jetbrains.kotlin.android' version '2.2.10'
+    id 'org.jetbrains.kotlin.kapt' version '2.2.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.2.10'
+    id "org.jetbrains.kotlin.plugin.parcelize" version "2.2.10"
+    id 'maven-publish'
+}
+
+android {
+    namespace = "com.gaurav.avnc"
+
+    compileSdk = 35
+    ndkVersion = "28.2.13676358"
+
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 35
+        versionCode = 51
+        versionName = "3.2.2"
+
+        buildConfigField "String", "VERSION_NAME", "\"${version}\""
+        buildConfigField "int", "VERSION_CODE", "${versionCode}"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/roomSchema/".toString()]
+            }
+        }
+
+        // NOTE (local fork): cmake build of native-vnc is disabled here.
+        // The prebuilt libnative-vnc.so for every ABI is supplied in app/src/main/jniLibs,
+        // extracted from the published AAR. Only Kotlin/Java code is recompiled.
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/roomSchema".toString())
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        ci {
+            initWith(release)
+        }
+    }
+
+    buildFeatures {
+        dataBinding = true
+        buildConfig = true
+    }
+
+    externalNativeBuild {
+        // cmake { version = "3.22.1"; path file("CMakeLists.txt") }   // see defaultConfig note
+    }
+    
+    lintOptions {
+        disable 'MissingTranslation'
+    }
+
+    packaging {
+        resources.excludes += "META-INF/LICENSE.md"
+        resources.excludes += "META-INF/LICENSE-notice.md"
+        resources.excludes += "META-INF/DEPENDENCIES"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:1.16.0"
+    implementation "androidx.activity:activity-ktx:1.10.1"
+    implementation "androidx.fragment:fragment-ktx:1.8.9"
+    implementation "androidx.appcompat:appcompat:1.7.1"
+    implementation "androidx.dynamicanimation:dynamicanimation-ktx:1.1.0"
+    implementation "androidx.biometric:biometric-ktx:1.2.0-alpha05"
+    implementation "androidx.preference:preference-ktx:1.2.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.9.3"
+    implementation "androidx.recyclerview:recyclerview:1.4.0"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    implementation "androidx.drawerlayout:drawerlayout:1.2.0"
+
+    def roomVersion = "2.7.2"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    implementation "com.google.android.material:material:1.7.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
+    implementation "org.connectbot:sshlib:2.2.36"
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
+
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test:runner:1.7.0"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.7.0"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.7.0"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.7.0"
+    androidTestImplementation "androidx.test:rules:1.7.0"
+    androidTestImplementation "androidx.test.ext:junit-ktx:1.3.0"
+    androidTestImplementation "androidx.room:room-testing:$roomVersion"
+    androidTestImplementation "io.mockk:mockk-android:1.14.5"
+    androidTestImplementation "org.apache.sshd:sshd-core:2.16.0"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = 'localFork'
+            url = uri('file:///C:/Users/Administrator/Desktop/1-test/1-linux-小小容器/refs-reference-assets-deletable/maven-local')
+        }
+    }
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.tiny-computer'
+            artifactId = 'avnc'
+            version = '3.2.2-tc4v10'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}

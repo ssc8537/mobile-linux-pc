@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020  Gaurav Ujjwal.
+  ~
+  ~ SPDX-License-Identifier:  GPL-3.0-or-later
+  ~
+  ~ See COPYING.txt for more details.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <application>
+
+        <activity-alias
+            android:name=".UriReceiverActivity"
+            android:exported="true"
+            android:targetActivity=".ui.vnc.IntentReceiverActivity">
+        </activity-alias>
+
+        <activity
+            android:name=".ui.vnc.VncActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="stateHidden"
+            tools:ignore="UnusedAttribute"
+            android:theme="@style/App.Theme" />
+
+        <activity
+            android:name=".ui.vnc.IntentReceiverActivity"
+            android:theme="@style/App.SplashTheme.Dark" />
+
+        <activity
+            android:name=".ui.prefs.PrefsActivity"
+            android:exported="true"
+            android:theme="@style/App.Theme">
+        </activity>
+
+        <activity
+            android:name=".ui.about.AboutActivity"
+            android:exported="true"
+            android:theme="@style/App.Theme">
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Local fork: zoom mis-touch hint.
+
+  Shown in the middle of the screen the first time the user pinches to zoom.
+  Grey translucent text on a fully transparent background so the desktop stays
+  visible. The view is not clickable, so touches pass through to the frame view.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="false">
+
+    <TextView
+        android:id="@+id/zoom_hint_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#66000000"
+        android:paddingStart="20dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="14dp"
+        android:text="@string/msg_zoom_mis_touch_confirm"
+        android:textColor="#E0E0E0"
+        android:textSize="15sp" />
+
+</FrameLayout>

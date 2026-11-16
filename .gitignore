@@ -1,0 +1,30 @@
+# build outputs
+build/
+.gradle/
+.kotlin/
+.idea/
+local.properties
+*.iml
+captures/
+
+# native prebuilt libs (re-extract from the published AAR, see docs)
+jniLibs/
+extern/
+
+# rootfs images: 700MB+, ships as Release assets only
+*.tar.zst
+*.tar
+*.apk
+*.aar
+*.zip
+
+# python junk
+__pycache__/
+*.pyc
+*.pkl
+*.pyd
+*.whl
+
+# tokens / secrets
+_tok.txt
+*.jks
