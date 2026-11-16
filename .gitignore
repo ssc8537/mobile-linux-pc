@@ -1,5 +1,5 @@
-# build outputs
-build/
+# gradle build outputs — anchored on source/ so tools/build/ (build scripts) stays tracked
+source/**/build/
 .gradle/
 .kotlin/
 .idea/
