@@ -23,6 +23,8 @@ tiny_container 在 Android 上通过 PRoot 运行 Debian 13 + XFCE 桌面，并�
 
 每个 Release 里都附带对应的 `guide-usage-zh.md`（使用说明）和 `readme-versions-zh.md`（版本历史）。
 
+**历史版本汇总表（含 SHA-256 与回退方法）→ [history-versions/](history-versions/README-历史版本说明.md)**
+
 ## 和官方版的区别
 
 一句话：**桌面能用的功能更多，指针手感可调，但去掉了虚拟键盘。**
