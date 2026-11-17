@@ -1,4 +1,25 @@
 # -*- coding: utf-8 -*-
+import os
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
 """Patch build_rootfs_v2.py for v5:
   * embed hk_layout.py (Hacker's Keyboard port data) and tiny_osk_caret.py
   * autostart the caret bridge
@@ -7,7 +28,7 @@
 import io
 import os
 
-P = r"C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\tools-probe-scripts-deletable\build_rootfs_v2.py"
+P = os.path.join(WS, 'tools-probe-scripts-deletable', 'build_rootfs_v2.py')
 src = io.open(P, encoding="utf-8").read()
 
 # ---------------------------------------------------------------- constant paths

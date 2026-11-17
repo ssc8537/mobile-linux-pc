@@ -1,4 +1,25 @@
 # -*- coding: utf-8 -*-
+import os
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
 """Remove every trace of the on-screen keyboard work (user order m03615).
 
 Keeps: zoom mis-touch guard, pointer tuning, cursor colour/size, restored
@@ -8,7 +29,7 @@ import io
 import os
 import re
 
-R = r"C:\Users\Administrator\Desktop\1-test\1-linux-小小容器"
+R = WS
 AVNC = os.path.join(R, "avnc-upstream-fork-deletable", "app", "src", "main")
 HOST = os.path.join(R, "build-env-toolchain", "ws-gradle-build-copy-deletable",
                     "tiny_container", "app", "src", "main", "java", "com", "fct", "tc4")

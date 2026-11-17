@@ -1,7 +1,30 @@
 import io, os
 
-ROOT = r'C:\Users\Administrator\Desktop\1-test\1-linux-小小容器'
-P = ROOT + r'\avnc-upstream-fork-deletable\app\build.gradle'
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
+ROOT = WS
+MAVEN_LOCAL_URL = 'file:///' + os.path.join(
+    ROOT, 'refs-reference-assets-deletable', 'maven-local'
+).replace('\\', '/')
+P = os.path.join(ROOT, 'avnc-upstream-fork-deletable', 'app', 'build.gradle')
 s = io.open(P, 'r', encoding='utf-8', newline='').read()
 eol = '\r\n' if '\r\n' in s else '\n'
 
@@ -16,7 +39,7 @@ new_pub = ("publishing {" + eol +
            "    repositories {" + eol +
            "        maven {" + eol +
            "            name = 'localFork'" + eol +
-           "            url = uri('file:///C:/Users/Administrator/Desktop/1-test/1-linux-\u5c0f\u5c0f\u5bb9\u5668/refs-reference-assets-deletable/maven-local')" + eol +
+           "            url = uri('" + MAVEN_LOCAL_URL + "')" + eol +
            "        }" + eol +
            "    }" + eol +
            "    publications {")
@@ -41,7 +64,7 @@ old_repo = '        maven { url = uri("https://jitpack.io") }'
 new_repo = ('        maven { url = uri("https://jitpack.io") }\n'
             '        // Local fork: patched AVNC AAR (zoom lock, pointer tuning, cursor, OSK helpers)\n'
             '        maven {\n'
-            '            url = uri("file:///C:/Users/Administrator/Desktop/1-test/1-linux-\u5c0f\u5c0f\u5bb9\u5668/refs-reference-assets-deletable/maven-local")\n'
+            '            url = uri("' + MAVEN_LOCAL_URL + '")\n'
             '            metadataSources { mavenPom(); artifact() }\n'
             '        }')
 assert old_repo in s3

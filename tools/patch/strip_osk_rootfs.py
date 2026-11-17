@@ -1,9 +1,30 @@
 # -*- coding: utf-8 -*-
+import os
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
 """Strip every OSK/caret/Hacker's-Keyboard artefact from the rootfs builder."""
 import io
 import re
 
-F = r"C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\tools-probe-scripts-deletable\build_rootfs_v2.py"
+F = os.path.join(WS, 'tools-probe-scripts-deletable', 'build_rootfs_v2.py')
 raw = io.open(F, "r", encoding="utf-8", newline="").read()
 crlf = "\r\n" in raw
 src = raw.replace("\r\n", "\n")

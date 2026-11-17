@@ -1,6 +1,26 @@
 import io, os
 
-RES = r'C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\avnc-upstream-fork-deletable\app\src\main\res'
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
+RES = os.path.join(WS, 'avnc-upstream-fork-deletable', 'app', 'src', 'main', 'res')
 
 def rd(p):
     return io.open(p, 'r', encoding='utf-8', newline='').read()

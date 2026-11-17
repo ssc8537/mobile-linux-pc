@@ -109,9 +109,10 @@ App 侧每个改动点一个脚本，按顺序跑就能把上游原版改成 V6 
 | `patch_devoptions.py` | `SettingsViewModel.kt` + `SettingsFragment.kt` + 文案 |
 | `patch_reimport_strings.py` / `patch_strings.py` / `patch_strings2.py` | `strings.xml` |
 
-> 注意：部分脚本里写的是**绝对路径**
-> `p = r'C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\build-env-toolchain\ws-gradle-build-copy-deletable\tiny_container\…'`，
-> 换机器要改这一行。脚本都是幂等写法（先 `assert` 锚点存在再替换）。
+> 这些脚本都已改成**不写死路径**：文件头有一段 `_find_ws()`，
+> 依次查 `$env:TC_ROOT` → 从脚本所在目录向上找含 `build-env-toolchain` 或 `source/app` 的目录。
+> 所以无论仓库放在哪里、脚本从哪个盘符运行都能找到工作区。
+> 脚本都是幂等写法（先 `assert` 锚点存在再替换），锚点找不到就报错，不会静态改坏文件。
 
 ---
 

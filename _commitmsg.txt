@@ -1,0 +1,29 @@
+refactor(tools): 补丁脚本改为自动查找工作区根，不再写死绝对路径
+
+26 个 tools/patch 脚本原本在文件头写死
+  C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\...
+换机器 / 换目录就无法运行。现在统一为：
+
+  def _find_ws():
+      env = os.environ.get('TC_ROOT')       # 手动指定优先
+      ...
+      从脚本目录向上找含 build-env-toolchain 或 source/app 的目录
+
+  WS = _find_ws()
+  PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
+各脚本原来的 ROOT / RES / J / base 等变量改为
+os.path.join(WS, 'avnc-upstream-fork-deletable', 'app', 'src', 'main', ...)。
+
+顺带修正
+- wire_local_avnc.py：原来往 settings.gradle.kts 里写的是写死的 file:///C:/...
+  maven URL；现在按 MAVEN_LOCAL_URL = 'file:///' + os.path.join(WS, ...) 动态拼。
+- build_rootfs_v2.py：ROOT 由 __file__ 上两级改为同样的 TC_ROOT/向上查找逻辑，
+  否则从 tools-probe-scripts-deletable 运行时指向错误目录。
+
+验证
+- 26 个脚本 python -m py_compile 全部通过
+- eolstat.py / check_eol.py 在真实工作区（带 TC_ROOT 与不带 TC_ROOT）均正常输出
+- git grep 'C:\Users\Administrator' tools/patch/*.py 结果为空
+  （仅 _historical-keyboard-do-not-rerun/ 与 _obsolete-checks-do-not-rerun/ 保留原样）
+- 文档 spec-changes-and-rootfs.md A3 与 tools/patch/README.md 同步改写

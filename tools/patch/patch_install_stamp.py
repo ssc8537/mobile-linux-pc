@@ -1,5 +1,26 @@
-﻿import io
-p = r'C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\build-env-toolchain\ws-gradle-build-copy-deletable\tiny_container\app\src\main\java\com\fct\tc4\ui\page\ContainerManageViewModel.kt'
+import io
+import os
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
+p = os.path.join(WS, 'build-env-toolchain', 'ws-gradle-build-copy-deletable', 'tiny_container', 'app', 'src', 'main', 'java', 'com', 'fct', 'tc4', 'ui', 'page', 'ContainerManageViewModel.kt')
 s = io.open(p, encoding='utf-8', newline='').read()
 old = """                Global.autoLaunch = code
                 Global.isFirstLaunchDone = true

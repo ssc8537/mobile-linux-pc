@@ -1,5 +1,26 @@
-﻿import io
-base = r'C:\Users\Administrator\Desktop\1-test\1-linux-小小容器\build-env-toolchain\ws-gradle-build-copy-deletable\tiny_container\app\src\main\res'
+import io
+import os
+
+def _find_ws():
+    env = os.environ.get('TC_ROOT')
+    if env:
+        return env
+    _d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.isdir(os.path.join(_d, 'build-env-toolchain')) or os.path.isdir(
+            os.path.join(_d, 'source', 'app')
+        ):
+            return _d
+        _p = os.path.dirname(_d)
+        if _p == _d:
+            return os.path.dirname(os.path.abspath(__file__))
+        _d = _p
+
+
+WS = _find_ws()
+PATCH_DIR = os.path.dirname(os.path.abspath(__file__))
+
+base = os.path.join(WS, 'build-env-toolchain', 'ws-gradle-build-copy-deletable', 'tiny_container', 'app', 'src', 'main', 'res')
 zh_anchor = """    <string name="tc4_signal9_title">"""
 zh_new = """    <string name="tc4_reimport_title">需要重新导入系统镜像</string>
     <string name="tc4_reimport_message">这个版本装了新的 Linux 系统镜像（新增了 Windows 风格任务栏、悬浮键盘、任务管理器等）。检测到你手机里还是旧镜像的容器，必须重新导入才能用上新功能。\n\n重新导入会清空现有容器里的个人数据。重要文件请先放到「公共」文件夹或导出容器。</string>
