@@ -124,11 +124,42 @@ dependencies {
     androidTestImplementation "org.apache.sshd:sshd-core:2.16.0"
 }
 
+/**
+ * Directory the patched AVNC AAR is published into.
+ *
+ * tiny_container's settings.gradle.kts looks for this repository in the same
+ * places, so the two stay in sync without any absolute path:
+ *   1. $AVNC_MAVEN_LOCAL                                        explicit override
+ *   2. <ancestor>/avnc-maven-local                              portable location
+ *   3. <ancestor>/refs-reference-assets-deletable/maven-local   original workspace
+ *
+ * When neither exists we publish to <parent of the avnc checkout>/avnc-maven-local,
+ * which is exactly the portable location step 2 of the consumer side checks.
+ */
+def localForkRepoDir() {
+    def override = System.getenv("AVNC_MAVEN_LOCAL")
+    if (override) {
+        return new File(override).absolutePath
+    }
+    def relPaths = ["avnc-maven-local", "refs-reference-assets-deletable/maven-local"]
+    def dir = rootProject.projectDir
+    while (dir != null) {
+        for (rel in relPaths) {
+            def candidate = new File(dir, rel)
+            if (candidate.isDirectory()) {
+                return candidate.absolutePath
+            }
+        }
+        dir = dir.parentFile
+    }
+    return new File(rootProject.projectDir.parentFile, "avnc-maven-local").absolutePath
+}
+
 publishing {
     repositories {
         maven {
             name = 'localFork'
-            url = uri('file:///C:/Users/Administrator/Desktop/1-test/1-linux-小小容器/refs-reference-assets-deletable/maven-local')
+            url = uri(localForkRepoDir())
         }
     }
     publications {

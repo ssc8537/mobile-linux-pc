@@ -105,6 +105,9 @@
     <string name="tc4_settings_manage_files_desc">Allow the container to access Android files\nWhen using official containers, Android storage is usually at /mnt/sdcard</string>
     <string name="tc4_settings_battery_title">Battery Unrestricted</string>
     <string name="tc4_settings_battery_desc">Disable battery optimization to prevent the app from being killed by the system</string>
+    <string name="tc4_settings_dev_options_title">Disable child process limit</string>
+    <string name="tc4_settings_dev_options_desc">Open Developer options and enable "Disable child process restrictions", otherwise the Linux session gets killed after about 10 seconds</string>
+    <string name="tc4_settings_dev_options_failed">Cannot open Developer options, please open system settings manually</string>
 
     <!-- ==================== Help Page ==================== -->
     <string name="tc4_help_source_code_title">Source Code Repository</string>
@@ -189,6 +192,11 @@
     <string name="tc4_permission_file_denied">File management permission denied</string>
 
     <!-- ==================== Signal 9 Page ==================== -->
+    <string name="tc4_reimport_patch">Update system files only (recommended, keeps your data)</string>
+    <string name="tc4_reimport_title">System image needs re-import</string>
+    <string name="tc4_reimport_message">A newer built-in Linux image was detected (Windows-like taskbar, floating keyboard, task manager and more).\n\nRecommended: update system files only — desktop programs, taskbar and the floating keyboard are replaced while your documents, browser profile and installed apps are kept.\n\nPick Re-import only if the system actually misbehaves; that wipes all personal data inside the container.</string>
+    <string name="tc4_reimport_confirm">Re-import (erases container data)</string>
+    <string name="tc4_reimport_later">Not now</string>
     <string name="tc4_signal9_title">What happened?</string>
     <string name="tc4_signal9_description">Terminal terminated abnormally with error code 9. This is caused by Android 12+ limiting child processes. You need to manually disable this limit.</string>
     <string name="tc4_signal9_tool_hint">You can use these tools to fix:</string>

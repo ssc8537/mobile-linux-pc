@@ -37,8 +37,18 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("tc4-release.jks")
+            storePassword = "tc4zoom"
+            keyAlias = "tc4"
+            keyPassword = "tc4zoom"
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -54,10 +64,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
+    androidResources {
+        // rootfs.tar.zst 本身已是 zstd 压缩流，再压一遍只会拖慢打包且无收益
+        noCompress.add("zst")
     }
     packaging {
         jniLibs {

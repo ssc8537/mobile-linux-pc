@@ -126,6 +126,11 @@ class SettingsViewModel(
                 id = "battery_unlimited",
                 titleRes = R.string.tc4_settings_battery_title,
                 descriptionRes = R.string.tc4_settings_battery_desc
+            ),
+            ActionSetting(
+                id = "dev_options_phantom",
+                titleRes = R.string.tc4_settings_dev_options_title,
+                descriptionRes = R.string.tc4_settings_dev_options_desc
             )
         )
     }

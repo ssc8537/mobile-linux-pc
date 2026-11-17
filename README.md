@@ -55,17 +55,21 @@ v6 另外附带 `guide-usage-zh.md`（使用说明）和 `tc4-release.jks`（签
 ## 仓库结构
 
 ```
-source/app/     上游 tiny_container v4.2.3 源码（未改动，作对照基线）
-source/avnc/    我们改过的 AVNC 库源码（Kotlin 部分）
+source/app/     tiny_container 源码（已含全部定制改动，即 v6 基线）
+source/avnc/    我们改过的 AVNC 库源码（Kotlin 部分，3.2.2-tc4v10）
 tools/build/    构建脚本（env.ps1 / build-avnc.ps1 / build-apk.ps1 / install-sdk35.ps1）
 tools/patch/    改源码用的 Python 脚本（每个改动点一个脚本，可重放）
-docs/           AI 交接文档（先读 guide-master-context.md）
+docs/           AI 交接文档（先读 README-index.md，再读 guide-master-context.md）
 release/        使用说明与版本历史的纯净副本
 ```
 
+> `source/app/` 是**定制后的基线**，不是上游原版。与上游的差异清单
+> （12 个文件，带行号）见 [docs/spec-changes-and-rootfs.md](docs/spec-changes-and-rootfs.md)。
+> 上游原版源码请直接去 [Cateners/tiny_container](https://github.com/Cateners/tiny_container) 取。
+
 ## 怎么重新编译
 
-见 [docs/build-make-apk.md](docs/build-make-apk.md)。要点：
+见 [docs/build-and-upstream-sync.md](docs/build-and-upstream-sync.md)。要点：
 
 1. 装 JDK 21 + Android SDK（platform 37、build-tools 36.0.0、NDK 28.2.13676358）+ Gradle 9.4.1
 2. `source/avnc` 需要 Gradle 8.13，先 `publishReleasePublicationToLocalForkRepository`

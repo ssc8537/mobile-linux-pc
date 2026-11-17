@@ -374,6 +374,80 @@ class ContainerManageViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    /**
+     * 只把内置镜像里的“系统文件”覆盖到现有容器上，保留用户数据。
+     *
+     * assets 里除了完整的 rootfs.tar.zst，还带了一个 rootfs.patch.tar.zst：
+     * 它只包含我们这次新增/修改的文件（任务栏插件、任务管理器、截图、剪贴板、
+     * 修好的 export.sh 等）。这里把它解压到已有容器目录上，
+     * 不删除 dataDir/<code>，所以个人文件、浏览器配置都还在。
+     */
+    fun applyImagePatch() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val app = getApplication<Application>()
+            val code = Global.autoLaunch.ifBlank {
+                Global.installedContainers.firstOrNull() ?: ""
+            }
+            if (code.isBlank()) {
+                _installState.value = InstallState.Failed(
+                    app.getString(R.string.tc4_import_missing_code_builtin))
+                return@launch
+            }
+
+            _installState.value = InstallState.CopyingToCache
+            val cacheFile = File(app.filesDir, "rootfs.patch.tar.zst")
+            try {
+                app.assets.open("rootfs.patch.tar.zst").use { input ->
+                    cacheFile.outputStream().use { output ->
+                        input.copyTo(output, bufferSize = 8192)
+                    }
+                }
+
+                _installState.value = InstallState.Installing(
+                    code = code,
+                    currentStep = InstallStep.EXTRACTING_ROOTFS,
+                    startTimeMillis = System.currentTimeMillis(),
+                    containerSizeBytes = cacheFile.length(),
+                    webpage = null
+                )
+
+                execShell {
+                    val patch = $$"""
+                        export CONTAINER_DIR=$${app.dataDir}/$$code
+                        mkdir -p $CONTAINER_DIR
+                        # 早期版本曾经装过悬浮键盘，这里把它的残留（自启项、二进制、
+                        # 日志）一并清掉，否则开机自启会去拉起一个已经不存在的程序。
+                        $BIN_DIR/rm -rf "$CONTAINER_DIR/usr/local/share/tiny-osk"
+                        $BIN_DIR/rm -f "$CONTAINER_DIR/usr/local/bin/tiny-osk" \
+                              "$CONTAINER_DIR/usr/local/bin/tiny-osk-toggle" \
+                              "$CONTAINER_DIR/usr/local/bin/tiny-osk-caret" \
+                              "$CONTAINER_DIR/home/tiny/.config/autostart/tiny-osk.desktop" \
+                              "$CONTAINER_DIR/home/tiny/.config/autostart/tiny-osk-caret.desktop" \
+                              "$CONTAINER_DIR/usr/share/applications/tiny-osk.desktop"
+                        $BIN_DIR/rm -f "$CONTAINER_DIR/tmp/.tiny_osk_log" "$CONTAINER_DIR/tmp/.tiny_osk.log" \
+                              "$CONTAINER_DIR/tmp/.tiny_osk_caret" "$CONTAINER_DIR/tmp/.tiny_osk_toggle"
+                        $BIN_DIR/proot --link2symlink $BIN_DIR/tar -xf $CACHE_DIR/rootfs.patch.tar.zst -C $CONTAINER_DIR --delay-directory-restore --preserve-permissions
+                        $BIN_DIR/rm -f $CACHE_DIR/rootfs.patch.tar.zst
+                    """.trimIndent()
+                    Global.setupEnvironment()
+                    Global.sendCommand(patch)
+                    Global.sendCommand("exit")
+                }
+
+                Global.builtInImageStamp = Global.readBuiltInImageStamp()
+                Global.installedContainers = Global.installedContainers + code
+                _installState.value = InstallState.Completed(
+                    launchAfterInstall = false,
+                    code = code
+                )
+            } catch (e: Exception) {
+                cacheFile.delete()
+                _installState.value = InstallState.Failed(
+                    app.getString(R.string.tc4_import_failed, e.message ?: ""))
+            }
+        }
+    }
+
     /** 从 assets 内置 rootfs.tar.zst 开始导入（用户手动点"安装内置容器"触发） */
     fun startBuiltInImport() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -387,6 +461,7 @@ class ContainerManageViewModel(application: Application) : AndroidViewModel(appl
                     }
                 }
 
+                Global.installedContainers = Global.installedContainers - "xfce"
                 processCachedRootfs()
             } catch (e: Exception) {
                 cleanCacheFiles()
@@ -426,6 +501,8 @@ class ContainerManageViewModel(application: Application) : AndroidViewModel(appl
 
                 Global.autoLaunch = code
                 Global.isFirstLaunchDone = true
+                Global.builtInImageStamp = Global.readBuiltInImageStamp()
+                Global.installedContainers = Global.installedContainers + code
 
                 _installState.value = InstallState.Completed(
                     launchAfterInstall = true,
@@ -450,6 +527,7 @@ class ContainerManageViewModel(application: Application) : AndroidViewModel(appl
             }
             try {
                 performInstall(code, rawConfig)
+                Global.builtInImageStamp = Global.readBuiltInImageStamp()
                 _installState.value = InstallState.Completed(
                     launchAfterInstall = launchAfterInstall,
                     code = code

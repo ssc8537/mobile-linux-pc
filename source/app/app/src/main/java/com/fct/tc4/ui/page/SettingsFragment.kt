@@ -124,6 +124,19 @@ class SettingsFragment : Fragment() {
                     }
                 )
             }
+            // Local fork: Android 12+ phantom process killer. The Linux session dies after
+            // ~10 s unless '停止限制子进程' is enabled in Developer options. Jump straight there.
+            "dev_options_phantom" -> {
+                try {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+                } catch (e: Exception) {
+                    try {
+                        startActivity(Intent(Settings.ACTION_SETTINGS))
+                    } catch (e2: Exception) {
+                        Snackbar.make(binding.root, R.string.tc4_settings_dev_options_failed, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 

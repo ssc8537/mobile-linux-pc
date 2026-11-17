@@ -267,6 +267,71 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // 覆盖安装的新 APK 往往带了新镜像；旧容器还在的话，新镜像根本不会导入，
+        // 桌面端新功能就全都不生效。这里检测版本戳并提示用户重新导入。
+        if (Global.installedContainers.isNotEmpty() && Global.isBuiltInImageOutdated()) {
+            // Local fork: apply the additive image patch silently so new desktop
+            // features appear without the user having to answer a dialog.
+            autoPatchImageIfOutdated()
+        }
+
+        val autoCode = Global.autoLaunch
+        if (autoCode.isNotEmpty() && autoCode in Global.installedContainers) {
+            viewModel.navigateTo(MainViewModel.Screen.ContainerMain(autoCode))
+        } else {
+            if (autoCode.isNotEmpty()) {
+                Global.autoLaunch = ""
+            }
+            viewModel.navigateTo(MainViewModel.Screen.ContainerManage)
+        }
+    }
+
+    private var reimportPrompted = false
+
+    /** 提示用户重新导入内置镜像（旧容器的数据会被清空） */
+    /**
+     * Local fork: silently overlay the new system files onto the existing container.
+     *
+     * The overlay only adds/replaces system files (docklike taskbar, on-screen
+     * keyboard, task manager, screenshot tool, clipboard manager) and never
+     * touches /home, so the user's documents and browser profile survive.
+     */
+    private var autoPatchStarted = false
+
+    private fun autoPatchImageIfOutdated() {
+        if (autoPatchStarted) return
+        autoPatchStarted = true
+        val containerViewModel: ContainerManageViewModel by viewModels()
+        containerViewModel.applyImagePatch()
+    }
+
+    private fun askReimportImage() {
+        if (reimportPrompted) return
+        reimportPrompted = true
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(R.string.tc4_reimport_title)
+            .setMessage(R.string.tc4_reimport_message)
+            .setCancelable(false)
+            // 推荐：只覆盖系统文件，个人数据和浏览器配置都保留
+            .setPositiveButton(R.string.tc4_reimport_patch) { _, _ ->
+                val containerViewModel: ContainerManageViewModel by viewModels()
+                containerViewModel.applyImagePatch()
+                viewModel.navigateTo(MainViewModel.Screen.ContainerManage)
+            }
+            // 彻底重装：会清空容器里的个人数据
+            .setNeutralButton(R.string.tc4_reimport_confirm) { _, _ ->
+                val containerViewModel: ContainerManageViewModel by viewModels()
+                containerViewModel.autoInstallBuiltInContainer()
+                viewModel.navigateTo(MainViewModel.Screen.ContainerManage)
+            }
+            .setNegativeButton(R.string.tc4_reimport_later) { _, _ ->
+                Global.builtInImageStamp = Global.readBuiltInImageStamp()
+                onNormalLaunchContinue()
+            }
+            .show()
+    }
+
+    private fun onNormalLaunchContinue() {
         val autoCode = Global.autoLaunch
         if (autoCode.isNotEmpty() && autoCode in Global.installedContainers) {
             viewModel.navigateTo(MainViewModel.Screen.ContainerMain(autoCode))

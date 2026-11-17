@@ -105,6 +105,9 @@
     <string name="tc4_settings_manage_files_desc">允许在容器中访问安卓文件\n使用官方容器时，安卓存储空间通常在/mnt/sdcard</string>
     <string name="tc4_settings_battery_title">电池无限制</string>
     <string name="tc4_settings_battery_desc">关闭电池优化，防止软件被系统杀死</string>
+    <string name="tc4_settings_dev_options_title">停止限制子进程</string>
+    <string name="tc4_settings_dev_options_desc">打开开发者选项页面，找到“停止限制子进程”并开启，否则 Linux 系统会在约 10 秒后被系统杀掉</string>
+    <string name="tc4_settings_dev_options_failed">无法打开开发者选项页面，请手动到系统设置中开启</string>
 
     <!-- ==================== Help Page ==================== -->
     <string name="tc4_help_source_code_title">前往代码仓库</string>
@@ -189,6 +192,11 @@
     <string name="tc4_permission_file_denied">文件管理权限被拒绝</string>
 
     <!-- ==================== Signal 9 Page ==================== -->
+    <string name="tc4_reimport_patch">只更新系统文件（推荐，保留个人数据）</string>
+    <string name="tc4_reimport_title">需要重新导入系统镜像</string>
+    <string name="tc4_reimport_message">检测到内置 Linux 镜像有新版本（新增了 Windows 风格任务栏、悬浮键盘、任务管理器等）。\n\n推荐选“只更新系统文件”：只覆盖桌面程序、任务栏、悬浮键盘这些系统文件，你的文档、浏览器配置、已安装的软件都保留。\n\n只有系统真的出问题时，才选“重新导入”——它会清空容器里的所有个人数据。</string>
+    <string name="tc4_reimport_confirm">重新导入（会清空容器数据）</string>
+    <string name="tc4_reimport_later">这次先不导入</string>
     <string name="tc4_signal9_title">发生了什么？</string>
     <string name="tc4_signal9_description">终端异常终止，返回错误码9。此错误是安卓12+系统限制子进程数量造成的，需要手动关闭限制。</string>
     <string name="tc4_signal9_tool_hint">可以使用以下工具修复：</string>

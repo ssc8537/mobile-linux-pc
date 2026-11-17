@@ -272,6 +272,29 @@ object Global {
         }
     }
 
+    /**
+     * 内置镜像的版本戳。APK 换了镜像就必须重新导入，
+     * 否则覆盖安装后旧容器会一直沿用旧镜像（新功能全部不生效）。
+     */
+    var builtInImageStamp: String
+        get() = sharedPrefs.getString("built_in_image_stamp", "") ?: ""
+        set(value) = sharedPrefs.edit { putString("built_in_image_stamp", value) }
+
+    /** 读取 assets/rootfs.stamp 里的镜像版本戳 */
+    fun readBuiltInImageStamp(): String {
+        return try {
+            appContext.assets.open("rootfs.stamp").bufferedReader().use { it.readText().trim() }
+        } catch (_: Exception) {
+            ""
+        }
+    }
+
+    /** 内置镜像是否和已导入的容器不一致 */
+    fun isBuiltInImageOutdated(): Boolean {
+        val stamp = readBuiltInImageStamp()
+        return stamp.isNotEmpty() && stamp != builtInImageStamp
+    }
+
     /** 检查 assets 中是否内置了 rootfs.tar.zst */
     fun hasBuiltInRootfs(): Boolean {
         return try {
