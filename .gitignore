@@ -27,4 +27,4 @@ __pycache__/
 
 # tokens / secrets
 _tok.txt
-*.jks
+*.jks_commitmsg.txt
